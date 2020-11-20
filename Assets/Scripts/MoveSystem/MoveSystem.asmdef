@@ -1,0 +1,15 @@
+{
+    "name": "MoveSystem",
+    "references": [
+        "GUID:65da0d3442e35d2468589ddd4d14013e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
