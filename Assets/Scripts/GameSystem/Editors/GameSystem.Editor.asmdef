@@ -1,7 +1,8 @@
 {
-    "name": "GameSystem",
+    "name": "GameSystem.Editor",
     "references": [
         "GUID:65da0d3442e35d2468589ddd4d14013e",
+        "GUID:eae1541a851f6424a885376a85d239d7",
         "GUID:e1ce2ad1cbe4ca045b49427c76227b71",
         "GUID:8421b3c410d3e574aba8d5196bbdece8"
     ],
