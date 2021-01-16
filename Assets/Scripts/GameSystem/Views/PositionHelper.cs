@@ -22,7 +22,7 @@ namespace GameSystem.Views
             var boardPosition = new HexPosition
             {
                 Q = (int)q,
-                R = (int)r
+                R = Mathf.RoundToInt(r)
             };
 
             return boardPosition;

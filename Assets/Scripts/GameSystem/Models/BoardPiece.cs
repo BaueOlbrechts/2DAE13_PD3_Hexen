@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GameSystem.Models
 {
-    public class BoardPieceMovedEventArgs : EventArgs
+    public class BoardPieceMovedEventArgs : System.EventArgs
     {
         public Board<BoardPiece> Board { get; }
         public HexTile From { get; }
@@ -43,7 +43,7 @@ namespace GameSystem.Models
 
         void IPiece<BoardPiece>.Taken(Board<BoardPiece> board)
         {
-            OnBoardPieceTaken(EventArgs.Empty);
+            OnBoardPieceTaken(System.EventArgs.Empty);
         }
 
         protected virtual void OnBoardPieceMoved(BoardPieceMovedEventArgs arg)
@@ -52,7 +52,7 @@ namespace GameSystem.Models
             handler?.Invoke(this, arg);
         }
 
-        protected virtual void OnBoardPieceTaken(EventArgs arg)
+        protected virtual void OnBoardPieceTaken(System.EventArgs arg)
         {
             EventHandler handler = BoardPieceTaken;
             handler?.Invoke(this, arg);

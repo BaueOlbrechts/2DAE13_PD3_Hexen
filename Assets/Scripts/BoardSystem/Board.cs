@@ -6,20 +6,8 @@ using UnityEngine;
 
 namespace BoardSystem
 {
-    public class PiecePlacedEventArgs<TPiece> : EventArgs where TPiece : class, IPiece<TPiece>
-    {
-        public TPiece Piece { get; }
-
-        public PiecePlacedEventArgs(TPiece piece)
-        {
-            Piece = piece;
-        }
-    }
-
     public class Board<TPiece> where TPiece : class, IPiece<TPiece>
     {
-        public event EventHandler<PiecePlacedEventArgs<TPiece>> PiecePlaced;
-
         private Dictionary<HexPosition, HexTile> _hexTiles = new Dictionary<HexPosition, HexTile>();
         private List<TPiece> _values = new List<TPiece>();
         private List<HexTile> _keys = new List<HexTile>();
@@ -104,8 +92,6 @@ namespace BoardSystem
 
             _keys.Add(toHexTile);
             _values.Add(piece);
-
-            OnPiecePlaced(new PiecePlacedEventArgs<TPiece>(piece));
         }
 
         public void UnHighlight(List<HexTile> hexTiles)
@@ -122,12 +108,6 @@ namespace BoardSystem
             {
                 hexTile.IsHighlighted = true;
             }
-        }
-
-        protected virtual void OnPiecePlaced(PiecePlacedEventArgs<TPiece> args)
-        {
-            EventHandler<PiecePlacedEventArgs<TPiece>> handler = PiecePlaced;
-            handler?.Invoke(this, args);
         }
 
         private void InitHexTiles()

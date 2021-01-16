@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 namespace GameSystem.Views
 {
-    public class HexTileView : MonoBehaviour, IPointerClickHandler
+    public class HexTileView : MonoBehaviour, IPointerClickHandler, IDropHandler, IPointerEnterHandler
     {
         [SerializeField]
         private Material _highlightMaterial = null;
@@ -21,7 +21,13 @@ namespace GameSystem.Views
             get => _model;
             set
             {
+                if (_model != null)
+                    _model.HighlightStatusChanged -= ModelHighlightStatusChanged;
+
                 _model = value;
+
+                if (_model != null)
+                    _model.HighlightStatusChanged += ModelHighlightStatusChanged;
             }
         }
 
@@ -36,19 +42,32 @@ namespace GameSystem.Views
             Model = null;
         }
 
-        public void OnPointerClick(PointerEventData eventData)
-        {
-            Debug.Log($"Tile HexPosition: {Model.HexPosition.Q} {Model.HexPosition.R}");
-            _meshRenderer.material = _highlightMaterial;
-
-        }
-
-        private void ModelHighlightStatusChanged(object sender, EventArgs e)
+        private void ModelHighlightStatusChanged(object sender, System.EventArgs e)
         {
             if (Model.IsHighlighted)
                 _meshRenderer.material = _highlightMaterial;
             else
                 _meshRenderer.material = _originalMaterial;
+        }
+
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            Debug.Log($"Tile HexPosition: {Model.HexPosition.Q} {Model.HexPosition.R}");
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            var card = eventData.pointerDrag.GetComponent<CardCommandView>();
+            Debug.Log($"{card.name} used");
+
+            GameLoop.Instance.SelectTile(this.Model);
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            //Debug.Log($"Tile HexPosition: {Model.HexPosition.Q} {Model.HexPosition.R} entered");
+            GameLoop.Instance.HoverOver(Model);
         }
     }
 }

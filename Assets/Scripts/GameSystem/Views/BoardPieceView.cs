@@ -18,14 +18,10 @@ namespace GameSystem.Views
         [SerializeField]
         private bool _isPlayer = false;
         
-        //[SerializeField]
-        //private string _movementName = null;
-
         private BoardPiece _model;
 
         public bool IsPlayer => _isPlayer;
         
-        //public string MovementName => _movementName;
 
         public BoardPiece Model
         {
@@ -48,7 +44,7 @@ namespace GameSystem.Views
             }
         }
 
-        private void ModelTaken(object sender, EventArgs e)
+        private void ModelTaken(object sender, System.EventArgs e)
         {
             Destroy(this.gameObject);
         }
