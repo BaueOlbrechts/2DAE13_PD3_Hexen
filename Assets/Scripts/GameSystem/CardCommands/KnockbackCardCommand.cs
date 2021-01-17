@@ -46,7 +46,8 @@ namespace GameSystem.CardCommands
                 {
                     var checkPos = startTileCubePos + dir;
                     var tile = board.TileAt(checkPos);
-                    validHexTiles.Add(tile);
+                    if (tile != null)
+                        validHexTiles.Add(tile);
                 }
             }
             else
@@ -64,7 +65,8 @@ namespace GameSystem.CardCommands
                     {
                         var checkPos = startTileCubePos + dir;
                         var tile = board.TileAt(checkPos);
-                        validHexTiles.Add(tile);
+                        if (tile != null)
+                            validHexTiles.Add(tile);
                     }
                     return validHexTiles;
                 }
@@ -92,7 +94,8 @@ namespace GameSystem.CardCommands
                 {
                     var checkpos = startTileCubePos + directions[index];
                     var tile = board.TileAt(checkpos);
-                    validHexTiles.Add(tile);
+                    if (tile != null)
+                        validHexTiles.Add(tile);
                 }
             }
 
