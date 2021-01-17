@@ -49,21 +49,22 @@ namespace GameSystem.Views
             var go = eventData.pointerCurrentRaycast.gameObject;
 
             if (go)
-                Debug.Log($"Over object {go.name}, but unable to execute");
+                Debug.Log($"Card over {go.name}, but unable to execute");
             else
-                Debug.Log("Not over object");
+                Debug.Log("Not over tile");
 
             transform.SetParent(_originalParent);
             transform.position = _originalPosition;
             _image.raycastTarget = true;
+
             GameLoop.Instance.SelectCard(null);
-            GameLoop.Instance.SelectTile(null);
             GameLoop.Instance.CardUsed -= OnCardGetsUsed;
         }
 
         private void OnCardGetsUsed(object sender, EventArgs e)
         {
             GameLoop.Instance.CardUsed -= OnCardGetsUsed;
+            Debug.Log($"{this.name} used");
             transform.GetComponentInParent<CardCommandProviderView>().CardPlayed(this);
             Destroy(gameObject);
         }

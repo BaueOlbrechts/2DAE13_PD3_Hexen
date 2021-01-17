@@ -17,13 +17,13 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     private static int _boardRings = 3;
 
     private BoardPiece _playerPiece = null;
-    private HexTile _selectedTile = null;
+    private HexTile _hoverTile = null;
     private ICardCommand<BoardPiece> _currentCardCommand = null;
 
     public Board<BoardPiece> Board { get; } = new Board<BoardPiece>(_boardRings);
     public BoardPiece PlayerPiece => _playerPiece;
     public HexTile PlayerTile => Board.TileOf(PlayerPiece);
-    public HexTile SelectedTile => _selectedTile;
+    public HexTile SelectedTile => _hoverTile;
     public CardManager<BoardPiece> CardManager { get; internal set; }
 
 
@@ -79,11 +79,11 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     {
         if (_playerPiece != null && _currentCardCommand != null)
         {
-            Board.UnHighlight(_currentCardCommand.HexTiles(Board, PlayerTile, _selectedTile));
+            Board.UnHighlight(CardManager.Tiles());
 
-            _selectedTile = hexTile;
+            _hoverTile = hexTile;
 
-            Board.Highlight(_currentCardCommand.HexTiles(Board, PlayerTile, _selectedTile));
+            Board.Highlight(CardManager.SetTiles(_currentCardCommand.HexTiles(Board, PlayerTile, _hoverTile)));
         }
     }
 
@@ -91,15 +91,16 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     {
         if (_playerPiece != null && _currentCardCommand != null)
         {
-            if (hexTile == _selectedTile)
+            if (CardManager.Tiles().Contains(hexTile))
             {
-                Board.UnHighlight(_currentCardCommand.HexTiles(Board, PlayerTile, _selectedTile));
+                Board.UnHighlight(CardManager.Tiles());
 
-                _currentCardCommand.Execute(Board, _playerPiece, _selectedTile);
+                _currentCardCommand.Execute(Board, _playerPiece, _hoverTile);
 
                 OnCardUsed(new EventArgs());
 
-                _selectedTile = null;
+                CardManager.SetTiles(null);
+                _hoverTile = null;
                 _currentCardCommand = null;
             }
         }
@@ -108,12 +109,12 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     public void SelectCard(ICardCommand<BoardPiece> cardCommand)
     {
         if (_currentCardCommand != null)
-            Board.UnHighlight(_currentCardCommand.HexTiles(Board, PlayerTile, _selectedTile));
+            Board.UnHighlight(CardManager.Tiles());
 
         _currentCardCommand = cardCommand;
 
         if (_currentCardCommand != null)
-            Board.Highlight(_currentCardCommand.HexTiles(Board, PlayerTile, _selectedTile));
+            Board.Highlight(CardManager.SetTiles(_currentCardCommand.HexTiles(Board, PlayerTile, _hoverTile)));
     }
 
     public void OnCardUsed(EventArgs arg)

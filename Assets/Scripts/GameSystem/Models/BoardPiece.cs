@@ -43,7 +43,7 @@ namespace GameSystem.Models
 
         void IPiece<BoardPiece>.Taken(Board<BoardPiece> board)
         {
-            OnBoardPieceTaken(System.EventArgs.Empty);
+            OnBoardPieceTaken(EventArgs.Empty);
         }
 
         protected virtual void OnBoardPieceMoved(BoardPieceMovedEventArgs arg)
@@ -52,7 +52,7 @@ namespace GameSystem.Models
             handler?.Invoke(this, arg);
         }
 
-        protected virtual void OnBoardPieceTaken(System.EventArgs arg)
+        protected virtual void OnBoardPieceTaken(EventArgs arg)
         {
             EventHandler handler = BoardPieceTaken;
             handler?.Invoke(this, arg);

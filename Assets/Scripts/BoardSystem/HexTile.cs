@@ -20,13 +20,13 @@ namespace BoardSystem
         }
 
         public HexPosition HexPosition { get; }
-        public Vector3 BlockPosition { get; }
+        public Vector3 CubePosition { get; }
 
 
         public HexTile(int q, int r)
         {
             HexPosition = new HexPosition { Q = q, R = r };
-            BlockPosition = new Vector3(q, -(q + r), r);
+            CubePosition = new Vector3(q, -(q + r), r);
         }
 
 

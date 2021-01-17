@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 
 namespace GameSystem.Views
 {
-    public class HexTileView : MonoBehaviour, IPointerClickHandler, IDropHandler, IPointerEnterHandler
+    public class HexTileView : MonoBehaviour, IPointerClickHandler, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField]
         private Material _highlightMaterial = null;
@@ -58,16 +58,18 @@ namespace GameSystem.Views
 
         public void OnDrop(PointerEventData eventData)
         {
-            var card = eventData.pointerDrag.GetComponent<CardCommandView>();
-            Debug.Log($"{card.name} used");
-
-            GameLoop.Instance.SelectTile(this.Model);
+            GameLoop.Instance.SelectTile(Model);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
             //Debug.Log($"Tile HexPosition: {Model.HexPosition.Q} {Model.HexPosition.R} entered");
             GameLoop.Instance.HoverOver(Model);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            GameLoop.Instance.HoverOver(null);
         }
     }
 }

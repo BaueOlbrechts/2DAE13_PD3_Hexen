@@ -44,9 +44,10 @@ namespace GameSystem.Views
             }
         }
 
-        private void ModelTaken(object sender, System.EventArgs e)
+        private void ModelTaken(object sender, EventArgs e)
         {
-            Destroy(this.gameObject);
+            //Debug.Log("Model destroyed");
+            Destroy(gameObject);
         }
 
         private void ModelMoved(object sender, BoardPieceMovedEventArgs e)

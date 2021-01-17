@@ -31,6 +31,16 @@ namespace BoardSystem
             return null;
         }
 
+        public HexTile TileAt(Vector3 cubePosition)
+        {
+            HexPosition hexPos = new HexPosition { Q = (int)cubePosition.x, R = (int)cubePosition.z };
+
+            if (_hexTiles.TryGetValue(hexPos, out var foundValue))
+                return foundValue;
+
+            return null;
+        }
+
         public TPiece PieceAt(HexTile hexTile)
         {
             //IndexOff returns -1 when not found

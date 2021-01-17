@@ -35,7 +35,8 @@ namespace GameSystem.CardCommands
             else
             {
                 //Tile under cursor
-                validHexTiles.Add(cursorTile);
+                if (board.PieceAt(cursorTile) == null)
+                    validHexTiles.Add(cursorTile);
             }
             return validHexTiles;
         }
