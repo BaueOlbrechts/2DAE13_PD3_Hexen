@@ -28,7 +28,11 @@ namespace GameSystem.CardCommands
                         board.Take(tile);
                     }
 
-                    board.Move(tile, nextTile);
+                    var nextTilePiece = board.PieceAt(nextTile);
+                    if(nextTilePiece == null)
+                    {
+                        board.Move(tile, nextTile);
+                    }
                 }
             }
         }

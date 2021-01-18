@@ -22,6 +22,8 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     private BoardPiece _playerPiece = null;
     private HexTile _hoverTile = null;
     private ICardCommand<BoardPiece> _currentCardCommand = null;
+    private int _turnsBeforeEnemyTurn = 2;
+    private int _currentTurn = 0;
 
     public Board<BoardPiece> Board { get; } = new Board<BoardPiece>(_boardRings);
     public BoardPiece PlayerPiece => _playerPiece;
@@ -45,7 +47,6 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
         ConnectTileViews();
         ConnectBoardPieceViews();
         SetNewPieceToTiles();
-
     }
 
     private void ConnectTileViews()
@@ -119,7 +120,14 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
                 CardManager.SetTiles(null);
                 _hoverTile = null;
                 _currentCardCommand = null;
-                SetNewPieceToTiles();
+
+                _currentTurn++;
+                if(_currentTurn >= _turnsBeforeEnemyTurn)
+                {
+                    _currentTurn = 0;
+                    MovePiecesToTile();
+                    SetNewPieceToTiles();
+                }
             }
         }
     }
@@ -135,10 +143,21 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
             Board.Highlight(CardManager.SetTiles(_currentCardCommand.HexTiles(Board, PlayerTile, _hoverTile)));
     }
 
+    public void MovePiecesToTile()
+    {
+        var piecesToMove = Board.Pieces;
+        piecesToMove.Remove(_playerPiece);
+
+        foreach (var piece in piecesToMove)
+        {
+            Board.Move(Board.TileOf(piece), piece.ToTile);
+        }
+    }
     public void SetNewPieceToTiles()
     {
         List<HexTile> availableTilesAroundPlayer = new CommandHelper(Board, PlayerPiece).AllDirections(1).GenerateTiles();
         var piecesToCheck = Board.Pieces;
+        piecesToCheck.Remove(_playerPiece);
 
         foreach (var piece in Board.Pieces)
         {

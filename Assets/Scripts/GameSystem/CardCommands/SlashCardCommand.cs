@@ -32,7 +32,7 @@ namespace GameSystem.CardCommands
             if (cursorTile == null)
             {
                 validHexTiles = new CommandHelper(board, board.PieceAt(playerTile))
-                   .AllDirections()
+                   .AllDirections(1)
                    .GenerateTiles();
 
                 /*
