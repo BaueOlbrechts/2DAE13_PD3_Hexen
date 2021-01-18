@@ -13,6 +13,6 @@ namespace MoveSystem
 
         List<HexTile> HexTiles(Board<TPiece> board, HexTile playerTile, HexTile cursorTile);
 
-        void Execute(Board<TPiece> board, TPiece piece, HexTile toTile);
+        void Execute(Board<TPiece> board, TPiece piece, HexTile toTile, List<HexTile> validTiles);
     }
 }

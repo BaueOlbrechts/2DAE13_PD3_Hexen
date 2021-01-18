@@ -10,7 +10,7 @@ namespace GameSystem.CardCommands
 {
     public class MoveCardCommand : AbstractCardCommand
     {
-        public override void Execute(Board<BoardPiece> board, BoardPiece piece, HexTile toTile)
+        public override void Execute(Board<BoardPiece> board, BoardPiece piece, HexTile toTile, List<HexTile> validTiles)
         {
             var toPiece = board.PieceAt(toTile);
             if (toPiece != null)

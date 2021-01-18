@@ -23,12 +23,13 @@ namespace GameSystem.Views
         private List<CardCommandView> _cardsInHand = new List<CardCommandView>();
         private List<CardCommandView> _deck = new List<CardCommandView>();
 
+        public CardManager<BoardPiece> CardManager = null;
+
         private void Start()
         {
             GenerateDeck();
             DrawStartingCards();
         }
-
 
         private void GenerateDeck()
         {
@@ -42,6 +43,7 @@ namespace GameSystem.Views
                 foreach (var cardCommandView in _cardPrefabs)
                 {
                     var card = Instantiate(cardCommandView, transform);
+                    card.Command = CardManager.GetCardCommand(card.CardCommandName);
                     _deck.Add(card);
                 }
             }
@@ -52,6 +54,7 @@ namespace GameSystem.Views
                 var idx = UnityEngine.Random.Range(0, _cardPrefabs.Length);
                 var prefab = _cardPrefabs[idx];
                 var card = Instantiate(prefab, transform);
+                card.Command = CardManager.GetCardCommand(card.CardCommandName);
                 _deck.Add(card);
             }
 
@@ -101,7 +104,7 @@ namespace GameSystem.Views
             }
         }
 
-        public void CardPlayed(CardCommandView playedCard) 
+        public void CardPlayed(CardCommandView playedCard)
         {
             _cardsInHand.Remove(playedCard);
             DrawCard();

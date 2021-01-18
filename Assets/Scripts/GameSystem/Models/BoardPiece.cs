@@ -29,7 +29,7 @@ namespace GameSystem.Models
         public bool HasMoved { get; set; }
 
         public bool IsPlayer { get; }
-        public HexTile ToTile { get; internal set; }
+        public HexTile ToTile { get; internal set; } = null;
 
         public BoardPiece(bool isPlayer)
         {

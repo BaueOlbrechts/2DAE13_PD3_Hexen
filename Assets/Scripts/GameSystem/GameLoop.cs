@@ -3,8 +3,10 @@ using GameSystem.CardCommandProviders;
 using GameSystem.CardCommands;
 using GameSystem.Models;
 using GameSystem.MoveCommands;
+using GameSystem.States;
 using GameSystem.Views;
 using MoveSystem;
+using StateSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,37 +18,35 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
     [SerializeField]
     private PositionHelper _positionHelper = null;
 
-    [SerializeField]
-    private static int _boardRings = 3;
-
-    private BoardPiece _playerPiece = null;
-    private HexTile _hoverTile = null;
-    private ICardCommand<BoardPiece> _currentCardCommand = null;
-    private int _turnsBeforeEnemyTurn = 2;
-    private int _currentTurn = 0;
-
-    public Board<BoardPiece> Board { get; } = new Board<BoardPiece>(_boardRings);
-    public BoardPiece PlayerPiece => _playerPiece;
-    public HexTile PlayerTile => Board.TileOf(PlayerPiece);
-    public HexTile SelectedTile => _hoverTile;
-    public CardManager<BoardPiece> CardManager { get; internal set; }
-
-
-    public event EventHandler<EventArgs> CardUsed;
+    private StateMachine<GameStateBase> _stateMachine;
+    public Board<BoardPiece> Board { get; } = new Board<BoardPiece>(3);
 
 
     private void Awake()
     {
-        CardManager = new CardManager<BoardPiece>(Instance.Board);
-
-        CardManager.Register(KnockbackCardCommandProvider.Name, new KnockbackCardCommandProvider());
-        CardManager.Register(LineAttackCardCommandProvider.Name, new LineAttackCardCommandProvider());
-        CardManager.Register(MoveCardCommandProvider.Name, new MoveCardCommandProvider());
-        CardManager.Register(SlashCardCommandProvider.Name, new SlashCardCommandProvider());
+        var cardManager = new CardManager<BoardPiece>(Instance.Board);
+        cardManager.Register(KnockbackCardCommandProvider.Name, new KnockbackCardCommandProvider());
+        cardManager.Register(LineAttackCardCommandProvider.Name, new LineAttackCardCommandProvider());
+        cardManager.Register(MoveCardCommandProvider.Name, new MoveCardCommandProvider());
+        cardManager.Register(SlashCardCommandProvider.Name, new SlashCardCommandProvider());
 
         ConnectTileViews();
-        ConnectBoardPieceViews();
-        SetNewPieceToTiles();
+        var playerPiece = ConnectBoardPieceViews();
+        ConnectCardCommandProviderView(cardManager);
+
+        var playerGameState = new PlayerGameState(Board, playerPiece, cardManager);
+        var enemyGameState = new EnemyGameState(Board, playerPiece);
+
+        _stateMachine = new StateMachine<GameStateBase>();
+        _stateMachine.RegisterState(GameStates.Player, playerGameState);
+        _stateMachine.RegisterState(GameStates.Enemy, enemyGameState);
+        _stateMachine.MoveTo(GameStates.Enemy);
+    }
+
+    private void ConnectCardCommandProviderView(CardManager<BoardPiece> cardManager)
+    {
+        var cardCommandProviderView = FindObjectOfType<CardCommandProviderView>();
+        cardCommandProviderView.CardManager = cardManager;
     }
 
     private void ConnectTileViews()
@@ -60,9 +60,11 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
         }
     }
 
-    private void ConnectBoardPieceViews()
+    private BoardPiece ConnectBoardPieceViews()
     {
         var pieceViews = FindObjectsOfType<BoardPieceView>();
+        BoardPiece playerPiece = null;
+
         foreach (var pieceView in pieceViews)
         {
             var worldPosition = pieceView.transform.position;
@@ -76,13 +78,17 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
             pieceView.Model = piece;
 
             if (pieceView.IsPlayer)
-                _playerPiece = pieceView.Model;
+                playerPiece = pieceView.Model;
         }
+        return playerPiece;
     }
 
 
     public void HoverOver(HexTile hexTile)
     {
+        _stateMachine.CurrentState.HoverOver(hexTile);
+
+        /*
         if (_playerPiece != null && _currentCardCommand != null)
         {
             Board.UnHighlight(CardManager.Tiles());
@@ -102,10 +108,14 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
                 Board.Highlight(CardManager.SetTiles(new PiecePathFindingMoveCommand().Tiles(Board, piece, piece.ToTile)));
             }
         }
+        */
     }
 
     public void SelectTile(HexTile hexTile)
     {
+        _stateMachine.CurrentState.SelectTile(hexTile);
+
+        /*
         if (_playerPiece != null && _currentCardCommand != null)
         {
             if (CardManager.Tiles().Contains(hexTile))
@@ -130,10 +140,14 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
                 }
             }
         }
+        */
     }
 
     public void SelectCard(ICardCommand<BoardPiece> cardCommand)
     {
+        _stateMachine.CurrentState.SelectCard(cardCommand);
+
+        /*
         if (_currentCardCommand != null)
             Board.UnHighlight(CardManager.Tiles());
 
@@ -141,8 +155,10 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
 
         if (_currentCardCommand != null)
             Board.Highlight(CardManager.SetTiles(_currentCardCommand.HexTiles(Board, PlayerTile, _hoverTile)));
+        */
     }
 
+    /*
     public void MovePiecesToTile()
     {
         var piecesToMove = Board.Pieces;
@@ -211,4 +227,5 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
         EventHandler<EventArgs> handler = CardUsed;
         handler?.Invoke(this, arg);
     }
+    */
 }

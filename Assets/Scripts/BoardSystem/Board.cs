@@ -8,6 +8,8 @@ namespace BoardSystem
 {
     public class Board<TPiece> where TPiece : class, IPiece<TPiece>
     {
+        public event EventHandler<EventArgs> CardUsed;
+
         private Dictionary<HexPosition, HexTile> _hexTiles = new Dictionary<HexPosition, HexTile>();
         private List<TPiece> _values = new List<TPiece>();
         private List<HexTile> _keys = new List<HexTile>();
@@ -120,6 +122,14 @@ namespace BoardSystem
                 hexTile.IsHighlighted = true;
             }
         }
+
+
+        public void OnCardUsed(EventArgs arg)
+        {
+            EventHandler<EventArgs> handler = CardUsed;
+            handler?.Invoke(this, arg);
+        }
+
 
         private void InitHexTiles()
         {

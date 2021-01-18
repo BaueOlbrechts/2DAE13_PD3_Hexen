@@ -11,11 +11,9 @@ namespace GameSystem.CardCommands
 {
     public class KnockbackCardCommand : AbstractCardCommand
     {
-        public override void Execute(Board<BoardPiece> board, BoardPiece piece, HexTile toTile)
+        public override void Execute(Board<BoardPiece> board, BoardPiece piece, HexTile toTile, List<HexTile> validTiles)
         {
-            var tiles = GameLoop.Instance.CardManager.Tiles();
-
-            foreach (var tile in tiles)
+            foreach (var tile in validTiles)
             {
                 var toPiece = board.PieceAt(tile);
                 if (toPiece != null)

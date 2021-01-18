@@ -17,7 +17,7 @@ namespace GameSystem.CardCommands
             return validTiles.Count > 0;
         }
 
-        public abstract void Execute(Board<BoardPiece> board, BoardPiece piece, HexTile toTile);
+        public abstract void Execute(Board<BoardPiece> board, BoardPiece piece, HexTile toTile, List<HexTile> validTiles);
 
         public abstract List<HexTile> HexTiles(Board<BoardPiece> board, HexTile playerTile, HexTile cursorTile);
     }

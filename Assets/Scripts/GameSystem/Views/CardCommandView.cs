@@ -21,22 +21,22 @@ namespace GameSystem.Views
         private string _cardCommandName = null;
         public string CardCommandName => _cardCommandName;
 
-        public ICardCommand<BoardPiece> Model { get; set; }
+        public ICardCommand<BoardPiece> Command { get; set; }
 
         private void Start()
         {
             _originalParent = gameObject.transform.parent;
             _image = gameObject.GetComponent<Image>();
-            Model = GameLoop.Instance.CardManager.GetCardCommand(CardCommandName);
+            //Command = GameLoop.Instance.CardManager.GetCardCommand(CardCommandName);
         }
 
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             _originalPosition = transform.position;
-            GameLoop.Instance.SelectCard(Model);
+            GameLoop.Instance.SelectCard(Command);
             _image.raycastTarget = false;
-            GameLoop.Instance.CardUsed += OnCardGetsUsed;
+            GameLoop.Instance.Board.CardUsed += OnCardGetsUsed;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -58,12 +58,12 @@ namespace GameSystem.Views
             _image.raycastTarget = true;
 
             GameLoop.Instance.SelectCard(null);
-            GameLoop.Instance.CardUsed -= OnCardGetsUsed;
+            GameLoop.Instance.Board.CardUsed -= OnCardGetsUsed;
         }
 
         private void OnCardGetsUsed(object sender, EventArgs e)
         {
-            GameLoop.Instance.CardUsed -= OnCardGetsUsed;
+            GameLoop.Instance.Board.CardUsed -= OnCardGetsUsed;
             Debug.Log($"{this.name} used");
             transform.GetComponentInParent<CardCommandProviderView>().CardPlayed(this);
             Destroy(gameObject);

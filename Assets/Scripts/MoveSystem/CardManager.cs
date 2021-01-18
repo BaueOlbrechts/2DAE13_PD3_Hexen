@@ -32,11 +32,13 @@ namespace MoveSystem
             _providers.TryGetValue(name, out var cardCommandProvider);
             return cardCommandProvider.Commands()[0];
         }
+
         public List<HexTile> SetTiles(List<HexTile> hexTiles)
         {
             _validTiles = hexTiles;
             return _validTiles;
         }
+
         public List<HexTile> Tiles()
         {
             return _validTiles;
