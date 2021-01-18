@@ -105,7 +105,7 @@ namespace GameSystem.CardCommands
             {
                 var direction = CommandHelper.DetermineHexDirection(playerTile, cursorTile);
                 if (direction.Q == 0 && direction.R == 0)
-                    return new CommandHelper(board, board.PieceAt(playerTile)).AllDirections(1).GenerateTiles();
+                    return new CommandHelper(board, board.PieceAt(playerTile)).AllDirections().GenerateTiles();
 
                 validHexTiles = new CommandHelper(board, board.PieceAt(playerTile)).Collect((int)direction.Q, (int)direction.R).GenerateTiles();
 

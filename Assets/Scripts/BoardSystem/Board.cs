@@ -13,6 +13,7 @@ namespace BoardSystem
         private List<HexTile> _keys = new List<HexTile>();
 
         public List<HexTile> Tiles => _hexTiles.Values.ToList();
+        public List<TPiece> Pieces => _values.ToList();
 
         public readonly int BoardRings;
 

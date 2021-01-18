@@ -29,7 +29,7 @@ namespace GameSystem.Models
         public bool HasMoved { get; set; }
 
         public bool IsPlayer { get; }
-
+        public HexTile ToTile { get; internal set; }
 
         public BoardPiece(bool isPlayer)
         {
@@ -44,6 +44,11 @@ namespace GameSystem.Models
         void IPiece<BoardPiece>.Taken(Board<BoardPiece> board)
         {
             OnBoardPieceTaken(EventArgs.Empty);
+        }
+
+        public void SetNewToTile(HexTile toTile)
+        {
+            ToTile = toTile;
         }
 
         protected virtual void OnBoardPieceMoved(BoardPieceMovedEventArgs arg)

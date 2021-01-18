@@ -1,10 +1,13 @@
 ﻿using BoardSystem;
 using GameSystem.CardCommandProviders;
+using GameSystem.CardCommands;
 using GameSystem.Models;
+using GameSystem.MoveCommands;
 using GameSystem.Views;
 using MoveSystem;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Utils;
 
@@ -41,6 +44,8 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
 
         ConnectTileViews();
         ConnectBoardPieceViews();
+        SetNewPieceToTiles();
+
     }
 
     private void ConnectTileViews()
@@ -85,6 +90,17 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
 
             Board.Highlight(CardManager.SetTiles(_currentCardCommand.HexTiles(Board, PlayerTile, _hoverTile)));
         }
+        else if (_playerPiece != null && _currentCardCommand == null)
+        {
+            if (CardManager.Tiles() != null)
+                Board.UnHighlight(CardManager.Tiles());
+
+            var piece = Board.PieceAt(hexTile);
+            if (piece != null && piece != _playerPiece)
+            {
+                Board.Highlight(CardManager.SetTiles(new PiecePathFindingMoveCommand().Tiles(Board, piece, piece.ToTile)));
+            }
+        }
     }
 
     public void SelectTile(HexTile hexTile)
@@ -99,9 +115,11 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
 
                 OnCardUsed(new EventArgs());
 
+
                 CardManager.SetTiles(null);
                 _hoverTile = null;
                 _currentCardCommand = null;
+                SetNewPieceToTiles();
             }
         }
     }
@@ -115,6 +133,58 @@ public class GameLoop : SingletonMonoBehaviour<GameLoop>
 
         if (_currentCardCommand != null)
             Board.Highlight(CardManager.SetTiles(_currentCardCommand.HexTiles(Board, PlayerTile, _hoverTile)));
+    }
+
+    public void SetNewPieceToTiles()
+    {
+        List<HexTile> availableTilesAroundPlayer = new CommandHelper(Board, PlayerPiece).AllDirections(1).GenerateTiles();
+        var piecesToCheck = Board.Pieces;
+
+        foreach (var piece in Board.Pieces)
+        {
+            HexTile pieceTile = Board.TileOf(piece);
+
+            if (availableTilesAroundPlayer.Contains(pieceTile))
+            {
+                piece.SetNewToTile(pieceTile);
+                availableTilesAroundPlayer.Remove(pieceTile);
+                piecesToCheck.Remove(piece);
+            }
+        }
+
+
+        foreach (var piece in piecesToCheck)
+        {
+            HexTile pieceTile = Board.TileOf(piece);
+            var fromPosition = pieceTile.HexPosition;
+
+            if (availableTilesAroundPlayer.Count > 0)
+            {
+                HexTile nearestTile = availableTilesAroundPlayer[0];
+                float distance = Mathf.Infinity;
+
+                foreach (var tile in availableTilesAroundPlayer)
+                {
+                    var toPosition = tile.HexPosition;
+
+                    var xDistance = Mathf.Abs(fromPosition.Q - toPosition.Q);
+                    var yDistance = Mathf.Abs(fromPosition.R - toPosition.R);
+
+                    var totalDistance = xDistance + yDistance;
+                    if (totalDistance < distance)
+                    {
+                        distance = totalDistance;
+                        nearestTile = tile;
+                    }
+                }
+
+                piece.SetNewToTile(nearestTile);
+                availableTilesAroundPlayer.Remove(nearestTile);
+            }
+            else
+                piece.SetNewToTile(pieceTile);
+        }
+
     }
 
     public void OnCardUsed(EventArgs arg)
