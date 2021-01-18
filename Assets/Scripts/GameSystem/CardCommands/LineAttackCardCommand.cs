@@ -30,6 +30,11 @@ namespace GameSystem.CardCommands
             var validHexTiles = new List<HexTile>();
             if (cursorTile == null)
             {
+                validHexTiles = new CommandHelper(board, board.PieceAt(playerTile))
+                    .AllDirections()
+                    .GenerateTiles();
+
+                /*
                 //All tiles in lines
                 var startTileCubePos = playerTile.CubePosition;
                 Vector3[] directions = new[] { new Vector3(1, -1, 0), new Vector3(1, 0, -1), new Vector3(0, 1, -1), new Vector3(-1, 1, 0), new Vector3(-1, 0, 1), new Vector3(0, -1, 1) };
@@ -54,6 +59,8 @@ namespace GameSystem.CardCommands
                         N++;
                     }
                 }
+                */
+
 
                 // Less workload with predetermined directions
                 /*
@@ -96,6 +103,13 @@ namespace GameSystem.CardCommands
             }
             else
             {
+                var direction = CommandHelper.DetermineHexDirection(playerTile, cursorTile);
+                if (direction.Q == 0 && direction.R == 0)
+                    return new CommandHelper(board, board.PieceAt(playerTile)).AllDirections(1).GenerateTiles();
+
+                validHexTiles = new CommandHelper(board, board.PieceAt(playerTile)).Collect((int)direction.Q, (int)direction.R).GenerateTiles();
+
+                /*
                 //Line in direction of cursor
                 var startTileCubePos = playerTile.CubePosition;
                 var cursorTileCubePos = cursorTile.CubePosition;
@@ -127,6 +141,7 @@ namespace GameSystem.CardCommands
                     validHexTiles.Add(nextTile);
                     N++;
                 }
+                */
             }
 
             return validHexTiles;

@@ -63,7 +63,6 @@ namespace GameSystem.Views
             var board = GameLoop.Instance.Board;
             var hexPos = _positionHelper.ToHexPosition(board, transform.position);
             Debug.Log($"Piece HexPosition {hexPos.Q} {hexPos.R}");
-            //gameLoop.Select(Model);
         }
 
         private void OnDestroy()
