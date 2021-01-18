@@ -77,9 +77,10 @@ namespace GameSystem.MoveCommands
             var toPosition = toTile.HexPosition;
 
             var xDistance = Mathf.Abs(fromPosition.Q - toPosition.Q);
-            var yDistance = Mathf.Abs(fromPosition.R - toPosition.R);
+            var yDistance = Mathf.Abs(fromPosition.Q + fromPosition.R - toPosition.Q - toPosition.R);
+            var zDistance = Mathf.Abs(fromPosition.R - toPosition.R) / 2;
 
-            var totalDistance = xDistance + yDistance;
+            var totalDistance = xDistance + yDistance + zDistance;
             return totalDistance;
         }
     }

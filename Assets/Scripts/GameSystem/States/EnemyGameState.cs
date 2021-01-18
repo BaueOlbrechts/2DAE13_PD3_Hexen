@@ -48,6 +48,7 @@ namespace GameSystem.States
             var piecesToCheck = _board.Pieces;
             piecesToCheck.Remove(_playerPiece);
 
+            //Leave pieces next to the player
             foreach (var piece in _board.Pieces)
             {
                 HexTile pieceTile = _board.TileOf(piece);
@@ -59,12 +60,26 @@ namespace GameSystem.States
                     piecesToCheck.Remove(piece);
                 }
             }
-
-
-            foreach (var piece in piecesToCheck)
+            
+            //Sort pieces according to distance
+            for (int i = 0; i < piecesToCheck.Count; i++)
             {
+                for (int j = 0; j < piecesToCheck.Count; j++)
+                {
+                    if (DistanceToTile(_board.TileOf(piecesToCheck[j]), _board.TileOf(_playerPiece)) > DistanceToTile(_board.TileOf(piecesToCheck[i]), _board.TileOf(_playerPiece)))
+                    {
+                        var temp = piecesToCheck[i];
+                        piecesToCheck[i] = piecesToCheck[j];
+                        piecesToCheck[j] = temp;
+                    }
+                }
+            }
+
+            //Try to get the closest available tile (or stay if there are none)
+            for (int i = 0; i < piecesToCheck.Count; i++)
+            {
+                var piece = piecesToCheck[i];
                 HexTile pieceTile = _board.TileOf(piece);
-                var fromPosition = pieceTile.HexPosition;
 
                 if (availableTilesAroundPlayer.Count > 0)
                 {
@@ -73,12 +88,7 @@ namespace GameSystem.States
 
                     foreach (var tile in availableTilesAroundPlayer)
                     {
-                        var toPosition = tile.HexPosition;
-
-                        var xDistance = Mathf.Abs(fromPosition.Q - toPosition.Q);
-                        var yDistance = Mathf.Abs(fromPosition.R - toPosition.R);
-
-                        var totalDistance = xDistance + yDistance;
+                        float totalDistance = DistanceToTile(pieceTile, tile);
                         if (totalDistance < distance)
                         {
                             distance = totalDistance;
@@ -92,6 +102,19 @@ namespace GameSystem.States
                 else
                     piece.SetNewToTile(pieceTile);
             }
+        }
+
+        private static float DistanceToTile(HexTile fromTile, HexTile toTile)
+        {
+            var fromPosition = fromTile.HexPosition;
+            var toPosition = toTile.HexPosition;
+
+            var xDistance = Mathf.Abs(fromPosition.Q - toPosition.Q);
+            var yDistance = Mathf.Abs(fromPosition.Q + fromPosition.R - toPosition.Q - toPosition.R);
+            var zDistance = Mathf.Abs(fromPosition.R - toPosition.R) / 2;
+
+            var totalDistance = xDistance + yDistance + zDistance;
+            return totalDistance;
         }
 
         private void MoveToPlayerState()
